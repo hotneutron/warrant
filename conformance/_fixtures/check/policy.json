@@ -1,0 +1,25 @@
+{
+  "_doc": "Synthetic policy for conformance testing. Includes invented_type for R1 drift test.",
+  "version": "1.0",
+  "type_authority": {
+    "findings": "structured",
+    "exercise_step": "structured",
+    "plan": "derived",
+    "reflection": "structured",
+    "reaction": "derived",
+    "cross_check": "derived",
+    "brainstorm": "speculative",
+    "proposal": "derived",
+    "invented_type": "derived"
+  },
+  "config": {
+    "docs_dir": "docs",
+    "extra_roots": ["extra_root"],
+    "skip": ["docs/16_skip_me.md"],
+    "partner_markers": ["axiom-meta-ds4m"],
+    "partner_name": "axiom-meta-ds4m",
+    "leaf_source": "methodology_state.json",
+    "ledger_path": "sync_ledger.json",
+    "registry": "artifact_types.json"
+  }
+}

@@ -1,0 +1,147 @@
+{
+  "_doc": "Expected per-doc results for apply conformance suite.",
+  "hard": [
+    "A1",
+    "A2",
+    "A4",
+    "A5",
+    "A6",
+    "A7",
+    "A8",
+    "A9",
+    "A10"
+  ],
+  "checks": {
+    "A1": {
+      "fixture": "docs/260616-a1-no-fm-reaction-test.md",
+      "status": "PASS",
+      "desc": "no frontmatter \u2192 stamped with reaction/derived"
+    },
+    "A2": {
+      "fixture": "docs/260616-a2-missing-field-reaction-test.md",
+      "status": "PASS",
+      "desc": "missing authority \u2192 regenerated with correct fields"
+    },
+    "A3": {
+      "fixture": "docs/260616-a3-correct-reaction-test.md",
+      "status": "PASS",
+      "desc": "correct frontmatter \u2192 untouched (idempotent)"
+    },
+    "A4": {
+      "fixture": "docs/260616-a4-wrong-type-brainstorm-test.md",
+      "status": "PASS",
+      "desc": "wrong type (findings\u2192brainstorm) + wrong authority \u2192 corrected"
+    },
+    "A5": {
+      "fixture": "docs/exercise_test/step-1-dimensionalization.md",
+      "status": "PASS",
+      "desc": "exercise step \u2192 structured, step-chain parents (empty for step-1)"
+    },
+    "A6": {
+      "fixture": "extra_root/260616-a6-plan-extra-root-test.md",
+      "status": "PASS",
+      "desc": "extra_root scanned \u2192 stamped with plan/derived"
+    },
+    "A7": {
+      "fixture": "docs/260616-a7-classify-reaction-test.md",
+      "status": "PASS",
+      "desc": "filename classification \u2014 reaction pattern \u2192 reaction type"
+    },
+    "A8": {
+      "fixture": "docs/260616-a8-proposal-policy-test.md",
+      "status": "PASS",
+      "desc": "authority from policy.json, not hardcoded default"
+    },
+    "A9": {
+      "fixture": "docs/260616-a9-preserve-parents-reaction-test.md",
+      "status": "PASS",
+      "desc": "hand-filled parent_artifacts + provenance_note preserved, not overwritten"
+    },
+    "A10": {
+      "fixture": "docs/260616-a10-provenance-block-reaction-test.md",
+      "status": "PASS",
+      "desc": "multi-line provenance_note '>' block survives apply round-trip (not collapsed to \">\")"
+    }
+  },
+  "expected_output": {
+    "docs/260616-a1-no-fm-reaction-test.md": {
+      "has_fm": true,
+      "artifact_type": "reaction",
+      "authority": "derived",
+      "generated_by": "manual",
+      "parent_artifacts": []
+    },
+    "docs/260616-a2-missing-field-reaction-test.md": {
+      "has_fm": true,
+      "artifact_type": "reaction",
+      "authority": "derived",
+      "generated_by": "manual",
+      "parent_artifacts": []
+    },
+    "docs/260616-a3-correct-reaction-test.md": {
+      "has_fm": true,
+      "artifact_type": "reaction",
+      "authority": "derived",
+      "generated_by": "manual",
+      "parent_artifacts": []
+    },
+    "docs/260616-a4-wrong-type-brainstorm-test.md": {
+      "has_fm": true,
+      "artifact_type": "brainstorm",
+      "authority": "speculative",
+      "generated_by": "manual",
+      "parent_artifacts": []
+    },
+    "docs/exercise_test/step-1-dimensionalization.md": {
+      "has_fm": true,
+      "artifact_type": "exercise_step",
+      "authority": "structured",
+      "generated_by": "manual",
+      "parent_artifacts": []
+    },
+    "extra_root/260616-a6-plan-extra-root-test.md": {
+      "has_fm": true,
+      "artifact_type": "plan",
+      "authority": "derived",
+      "generated_by": "manual",
+      "parent_artifacts": []
+    },
+    "docs/260616-a7-classify-reaction-test.md": {
+      "has_fm": true,
+      "artifact_type": "reaction",
+      "authority": "derived",
+      "generated_by": "manual",
+      "parent_artifacts": []
+    },
+    "docs/260616-a8-proposal-policy-test.md": {
+      "has_fm": true,
+      "artifact_type": "proposal",
+      "authority": "derived",
+      "generated_by": "manual",
+      "parent_artifacts": []
+    },
+    "docs/260616-a9-preserve-parents-reaction-test.md": {
+      "has_fm": true,
+      "artifact_type": "reaction",
+      "authority": "derived",
+      "generated_by": "manual",
+      "parent_artifacts": [
+        "docs/260616-a1-no-fm-reaction-test.md",
+        "docs/260616-a3-correct-reaction-test.md"
+      ]
+    },
+    "docs/260616-a10-provenance-block-reaction-test.md": {
+      "has_fm": true,
+      "artifact_type": "reaction",
+      "authority": "derived",
+      "generated_by": "manual",
+      "parent_artifacts": [
+        "docs/260616-a1-no-fm-reaction-test.md"
+      ],
+      "body_contains": [
+        "SENTINEL-A10-BLOCKSCALAR",
+        "Preserve the block on regeneration."
+      ]
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "_doc": "Test policy for apply conformance. Minimal types for fixture classification.",
+  "type_authority": {
+    "reaction": "derived",
+    "plan": "derived",
+    "findings": "structured",
+    "brainstorm": "speculative",
+    "exercise_step": "structured",
+    "reflection": "derived",
+    "cross_check": "derived",
+    "proposal": "derived"
+  },
+  "config": {
+    "docs_dir": "docs",
+    "extra_roots": ["extra_root"],
+    "skip": []
+  }
+}

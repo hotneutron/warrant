@@ -1,0 +1,14 @@
+{
+  "_doc": "Synthetic registry for conformance testing. Has known types but NOT 'invented_type' (R1 drift test).",
+  "version": "1.0",
+  "types": {
+    "findings": {"authority": "structured", "desc": "empirical conclusion with measurements"},
+    "plan": {"authority": "derived", "desc": "proposed course of action"},
+    "reflection": {"authority": "derived", "desc": "considered judgment"},
+    "reaction": {"authority": "derived", "desc": "response to an external artifact"},
+    "cross_check": {"authority": "derived", "desc": "independent verification"},
+    "brainstorm": {"authority": "speculative", "desc": "exploratory idea generation"},
+    "exercise_step": {"authority": "structured", "desc": "single step in an exercise"},
+    "proposal": {"authority": "derived", "desc": "cross-team ask demanding response"}
+  }
+}

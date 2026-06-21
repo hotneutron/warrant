@@ -1,0 +1,21 @@
+{
+  "_doc": "warrant REFERENCE policy — neutral defaults. NOT authoritative: each consuming team supplies its own <team>/policy.json (the namespace-relative type→authority map + domain config) and runs the reference engine with --policy pointing at it. With no policy + no domain config, the reference engine runs the generic checks only (frontmatter / required fields / type-known / authority-map / parents-exist / inversion / findings-bar / convergence-field) and skips the domain-specific ones (leaf-ref, sync-coverage) and registry-validation when their sources are absent.",
+  "version": "1.0",
+  "type_authority": {
+    "findings": "structured",
+    "exercise_step": "structured",
+    "methodology": "structured",
+    "plan": "derived",
+    "proposal": "derived",
+    "reflection": "derived",
+    "reaction": "derived",
+    "cross_check": "derived",
+    "brainstorm": "speculative",
+    "strategy": "speculative",
+    "schema_plan": "speculative",
+    "domain_extension": "speculative"
+  },
+  "config": {
+    "docs_dir": "docs"
+  }
+}

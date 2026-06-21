@@ -1,0 +1,294 @@
+{
+ "_doc": "Expected per-check results for warrant conformance suite. status=PASS means check should NOT fire (doc is clean for this check). status=FAIL means check SHOULD fire (doc has the violation). status=BLOCKED means the check can't be verified because the engine crashes before reaching it.",
+ "hard": [
+  "G1",
+  "G2",
+  "G3",
+  "G4",
+  "G5",
+  "G6",
+  "G14",
+  "G16",
+  "G17",
+  "G18",
+  "R1",
+  "R2",
+  "D3",
+  "D4"
+ ],
+ "checks": {
+  "G1": {
+   "fixture": "docs/01_no_fm.md",
+   "status": "FAIL",
+   "desc": "no frontmatter block \u2192 ERROR"
+  },
+  "G2": {
+   "fixture": "docs/02_missing_field.md",
+   "status": "FAIL",
+   "desc": "missing required field 'authority' \u2192 ERROR"
+  },
+  "G3": {
+   "fixture": "docs/03_unknown_type.md",
+   "status": "FAIL",
+   "desc": "unknown artifact_type 'nonexistent' \u2192 ERROR"
+  },
+  "G4": {
+   "fixture": "docs/04_authority_mismatch.md",
+   "status": "FAIL",
+   "desc": "authority 'speculative' != expected 'structured' for findings \u2192 ERROR"
+  },
+  "G5": {
+   "fixture": "docs/05_parent_not_found.md",
+   "status": "FAIL",
+   "desc": "parent path does not exist \u2192 ERROR"
+  },
+  "G6": {
+   "fixture": "docs/06_parent_is_dir.md",
+   "status": "PASS",
+   "desc": "directory parent \u2192 skip, no error, no crash (is_dir guard)"
+  },
+  "G7": {
+   "fixture": "docs/07_inversion_unack.md",
+   "status": "FAIL",
+   "desc": "structured child, speculative parent, no provenance_note \u2192 WARNING"
+  },
+  "G8": {
+   "fixture": "docs/08_inversion_ack.md",
+   "status": "PASS",
+   "desc": "structured child, speculative parent, WITH provenance_note \u2192 no WARNING"
+  },
+  "G9": {
+   "fixture": "docs/09_findings_no_bar.md",
+   "status": "FAIL",
+   "desc": "findings doc with speculative parent, no provenance_note \u2192 WARNING"
+  },
+  "G10": {
+   "fixture": "docs/260616-10_findings_few_units.md",
+   "status": "FAIL",
+   "desc": "findings doc with <3 unit-bearing quantities \u2192 WARNING"
+  },
+  "G11": {
+   "fixture": "docs/260616-11_findings_enough_units.md",
+   "status": "PASS",
+   "desc": "findings doc with >=3 unit-bearing quantities \u2192 no WARNING"
+  },
+  "G12": {
+   "fixture": "docs/12_no_convergence.md",
+   "status": "FAIL",
+   "desc": "reaction doc missing convergence field \u2192 WARNING"
+  },
+  "G13": {
+   "fixture": "docs/13_bad_convergence.md",
+   "status": "FAIL",
+   "desc": "reaction doc with invalid convergence value \u2192 WARNING"
+  },
+  "G14": {
+   "fixture": "docs/14_list_after_scalar.md",
+   "status": "PASS",
+   "desc": "scalar-then-list parse \u2192 no crash, parent_artifacts parsed as list"
+  },
+  "G15": {
+   "fixture": "docs/00_all_clean.md",
+   "status": "PASS",
+   "desc": "comprehensively valid doc \u2192 zero errors, zero warnings"
+  },
+  "G16": {
+   "fixture": "docs/16_inline_array.md",
+   "status": "PASS",
+   "desc": "inline-array parent_artifacts \u2192 parsed as list, no character-iteration errors"
+  },
+  "G17": {
+   "fixture": "docs/17_convergence_list.md",
+   "status": "FAIL",
+   "desc": "convergence list \u2192 no crash, correctly warns invalid/missing convergence"
+  },
+  "G18": {
+   "fixture": "docs/18_multi_candidate_path.md",
+   "status": "PASS",
+   "desc": "bare-filename parent \u2192 resolved via sibling-dir then REPO root"
+  },
+  "R1": {
+   "fixture": "policy",
+   "status": "FAIL",
+   "desc": "policy key 'invented_type' not in synthetic artifact_types.json \u2192 ERROR"
+  },
+  "R2": {
+   "fixture": "artifact_types.json",
+   "status": "PASS",
+   "desc": "registry absent \u2192 no error, engine does not crash (multi-run verified)"
+  },
+  "D1": {
+   "fixture": "docs/17_leaf_ref_unqualified.md",
+   "status": "FAIL",
+   "desc": "reaction doc with unqualified leaf ref 'cpu/imaginary_leaf' \u2192 WARNING"
+  },
+  "D2": {
+   "fixture": "docs/260616-18_sync_coverage.md",
+   "status": "FAIL",
+   "desc": "reaction mentioning partner with stale ledger \u2192 WARNING"
+  },
+  "D3": {
+   "fixture": "extra_root/15_extra_root.md",
+   "status": "PASS",
+   "desc": "extra_roots doc IS scanned (count includes extra_root) \u2014 verified via count"
+  },
+  "D4": {
+   "fixture": "docs/16_skip_me.md",
+   "status": "PASS",
+   "desc": "skip set doc is NOT scanned \u2014 verified via count delta (adds +1 when skip removed)"
+  },
+  "G19": {
+   "fixture": "docs/19_derived_inversion_ok.md",
+   "status": "PASS",
+   "desc": "derived child (plan), speculative parent, no provenance_note \u2192 NO warning (type-aware inversion gate; contrast G7)"
+  },
+  "G20": {
+   "fixture": "docs/20_structured_derived_ok.md",
+   "status": "PASS",
+   "desc": "structured child (exercise_step), DERIVED parent, no provenance_note \u2192 NO warning (narrowed gate: only structured\u2190speculative warns; contrast G7/G19)"
+  }
+ },
+ "expected_output": {
+  "_doc": "Per-doc expected errors/warnings for cross-reference.",
+  "policy": {
+   "errors": [
+    "not in the artifact_types registry"
+   ],
+   "warnings": []
+  },
+  "docs/00_all_clean.md": {
+   "errors": [],
+   "warnings": []
+  },
+  "docs/01_no_fm.md": {
+   "errors": [
+    "no frontmatter block"
+   ],
+   "warnings": []
+  },
+  "docs/02_missing_field.md": {
+   "errors": [
+    "missing required field",
+    "does not match"
+   ],
+   "warnings": []
+  },
+  "docs/03_unknown_type.md": {
+   "errors": [
+    "unknown artifact_type"
+   ],
+   "warnings": []
+  },
+  "docs/04_authority_mismatch.md": {
+   "errors": [
+    "does not match"
+   ],
+   "warnings": [
+    "no structured-authority parent"
+   ]
+  },
+  "docs/05_parent_not_found.md": {
+   "errors": [
+    "path does not exist"
+   ],
+   "warnings": []
+  },
+  "docs/06_parent_is_dir.md": {
+   "errors": [],
+   "warnings": []
+  },
+  "docs/07_inversion_unack.md": {
+   "errors": [],
+   "warnings": [
+    "authority inversion"
+   ]
+  },
+  "docs/08_inversion_ack.md": {
+   "errors": [],
+   "warnings": []
+  },
+  "docs/09_findings_no_bar.md": {
+   "errors": [],
+   "warnings": [
+    "authority inversion",
+    "no structured-authority"
+   ]
+  },
+  "docs/12_no_convergence.md": {
+   "errors": [],
+   "warnings": [
+    "missing or invalid"
+   ]
+  },
+  "docs/13_bad_convergence.md": {
+   "errors": [],
+   "warnings": [
+    "missing or invalid"
+   ]
+  },
+  "docs/14_list_after_scalar.md": {
+   "errors": [],
+   "warnings": []
+  },
+  "docs/16_inline_array.md": {
+   "errors": [],
+   "warnings": []
+  },
+  "docs/17_convergence_list.md": {
+   "errors": [],
+   "warnings": [
+    "missing or invalid"
+   ]
+  },
+  "docs/18_multi_candidate_path.md": {
+   "errors": [],
+   "warnings": []
+  },
+  "docs/17_leaf_ref_unqualified.md": {
+   "errors": [],
+   "warnings": [
+    "unqualified leaf ref"
+   ]
+  },
+  "docs/260616-10_findings_few_units.md": {
+   "errors": [],
+   "warnings": [
+    "carries only 2 unit-bearing"
+   ]
+  },
+  "docs/260616-11_findings_enough_units.md": {
+   "errors": [],
+   "warnings": []
+  },
+  "docs/260616-18_sync_coverage.md": {
+   "errors": [],
+   "warnings": [
+    "references the partner repo"
+   ]
+  },
+  "docs/_speculative_parent.md": {
+   "errors": [],
+   "warnings": []
+  },
+  "extra_root/15_extra_root.md": {
+   "errors": [],
+   "warnings": []
+  },
+  "docs/19_derived_inversion_ok.md": {
+   "errors": [],
+   "warnings": []
+  },
+  "docs/20_structured_derived_ok.md": {
+   "errors": [],
+   "warnings": []
+  },
+  "docs/_derived_parent.md": {
+   "errors": [],
+   "warnings": []
+  }
+ },
+ "expected_counts": {
+  "checked_with_skip": 22,
+  "checked_without_skip": 23
+ }
+}

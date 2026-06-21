@@ -1,0 +1,10 @@
+{
+  "_doc": "Synthetic methodology_state.json for conformance testing. Only has 'cpu' group, leaf 'real_leaf'.",
+  "dimensions": {
+    "cpu": {
+      "leaves": {
+        "real_leaf": {"value": 1.0}
+      }
+    }
+  }
+}

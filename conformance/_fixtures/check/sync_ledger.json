@@ -1,0 +1,11 @@
+{
+  "_doc": "Synthetic sync ledger — intentionally stale (dated 260101). All reaction docs mentioning partner will trigger D2.",
+  "repo": "axiom-meta-op",
+  "entries": [
+    {
+      "date": "2026-01-01",
+      "their_head": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "pinned": "0000000000000000000000000000000000000000"
+    }
+  ]
+}

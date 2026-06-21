@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+
+# conformance suite output — test_check.py rewrites this on every invocation; the tracked
+# golden is _expected.json, not the actual verdict. Keep it out of the tree.
+conformance/_verdict_check.json
+conformance/_verdict_apply.json
