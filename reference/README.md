@@ -22,6 +22,13 @@ inversion (warn, `provenance_note` escape) · findings bar (structured parent /
 `provenance_note`) · findings physical-grounding soft-check · `convergence` field on
 reaction/cross_check.
 
+**Retirement edges (negative knowledge):** `refuted_by:` / `superseded_by:` are inverse-provenance
+edges (the mirror of `parent_artifacts`; a scalar or a list). A doc carrying one is *retired*: its
+target must exist (error if missing); the retirer must be ≥ the retired doc's authority (warn on a
+weaker doc retiring a stronger one, `provenance_note` escape) and should reference the retired doc
+(soft warn if not); citing a retired doc as a `parent_artifacts` warns ("building on retired
+knowledge", `provenance_note` escape); and the retirement graph must be acyclic (error on a cycle).
+
 **Registry validation:** every `type_authority` key must be in the
 `artifact_types` registry (`../artifact_types/artifact_types.json`) — drift is an error.
 Skipped if the registry submodule isn't present.

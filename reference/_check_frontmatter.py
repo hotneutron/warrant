@@ -27,6 +27,7 @@ from pathlib import Path
 ENGINE_DIR = Path(__file__).resolve().parent
 REQUIRED = ["artifact_type", "authority", "generated_by", "parent_artifacts"]
 VALID_CONVERGENCE = {"independent", "propagated", "modal", "n/a"}
+AUTHORITY_RANK = {"structured": 3, "derived": 2, "speculative": 1}
 FM_RE = re.compile(r"\A---\n(.*?)\n---\n", re.DOTALL)
 # unit-bearing quantity detector (findings physical-grounding soft-check) — physical
 # units only; surrogate units (evals, seeds) deliberately don't count.
@@ -109,6 +110,14 @@ def parse_frontmatter(text):
     return meta
 
 
+def _as_list(v):
+    """Normalize a frontmatter field to a list — inverse-provenance edges accept a scalar
+    OR a list (a doc can be retired by ≥1 docs). Scalar parses as a single-element list."""
+    if v is None:
+        return []
+    return v if isinstance(v, list) else [v]
+
+
 def sync_status_line(ledger_full, partner_name):
     data = json.loads(ledger_full.read_text())
     entries = data.get("entries", [])
@@ -145,6 +154,7 @@ def main():
     registry = cfg.get("registry") or "../artifact_types/artifact_types.json"
 
     errors, warnings, checked = [], [], 0
+    retire_edges = {}   # rel -> [retirer rels] for the refuted_by/superseded_by graph (cycle check)
 
     # ---- registry validation: policy type keys must be in the artifact_types
     # registry — drift is an error, not silent. Skipped if the registry isn't present.
@@ -234,6 +244,12 @@ def main():
             pmeta = parse_frontmatter(ppath.read_text())
             if not pmeta:
                 continue
+            # Rule 2 — no authority propagation from retired docs: a parent that is itself
+            # refuted/superseded is retired knowledge; building on it warns (provenance_note escape,
+            # which the refuter's own doc carries — so a diagnosis citing what it refutes is exempt).
+            if (pmeta.get("refuted_by") or pmeta.get("superseded_by")) and not meta.get("provenance_note"):
+                warnings.append(f"{rel}: builds on retired knowledge — parent '{parent}' is "
+                                f"refuted/superseded; cite a current doc or add a provenance_note")
             if pmeta.get("authority") == "structured":
                 has_structured_parent = True
             # Inversion = laundering speculation as structured. The constitutional rule is
@@ -264,6 +280,53 @@ def main():
                                     f"quantities — illustrate the results with concrete physical "
                                     f"examples in domain units (W, mm², $, GB/s, ...) "
                                     f"(findings contract item 4, CLAUDE.md)")
+
+        # ---- inverse-provenance edges: refuted_by / superseded_by (the negative-knowledge marker).
+        # A retired doc is excluded from authority propagation (Rule 2, above) and must link the doc
+        # that retires it. Edges accept a scalar or a list (H1).
+        retirers = _as_list(meta.get("refuted_by")) + _as_list(meta.get("superseded_by"))
+        if retirers:
+            my_rank = AUTHORITY_RANK.get(meta.get("authority"), 0)
+            for target in retirers:
+                tpath = next((c for c in (path.parent / target, REPO / target) if c.exists()), None)
+                if tpath is None:
+                    errors.append(f"{rel}: refuted_by/superseded_by points to a missing doc: {target}")
+                    continue
+                retire_edges.setdefault(rel, []).append(tpath.relative_to(REPO).as_posix())
+                if not tpath.is_file():
+                    continue
+                ttext = tpath.read_text()
+                tmeta = parse_frontmatter(ttext) or {}
+                # H2 — the retirer must be at least as authoritative as the doc it retires
+                # (a weaker doc refuting a stronger one is a reverse inversion).
+                if AUTHORITY_RANK.get(tmeta.get("authority"), 0) < my_rank and not meta.get("provenance_note"):
+                    warnings.append(f"{rel}: retired by lower-authority doc '{target}' "
+                                    f"({tmeta.get('authority')} < {meta.get('authority')}) — a weaker "
+                                    f"doc retiring a stronger one; add a provenance_note to acknowledge")
+                # H3 — the retirer should reference the retired doc (provenance or body); soft.
+                if path.name not in ttext:
+                    warnings.append(f"{rel}: retired by '{target}', but '{target}' does not reference "
+                                    f"this doc (unlinked retirement edge)")
+
+    # ---- retirement-graph cycles (A retires B retires A) → error; refutation must be acyclic.
+    _seen, _stack, _cycle_node = set(), set(), None
+
+    def _has_cycle(u):
+        _seen.add(u)
+        _stack.add(u)
+        for v in retire_edges.get(u, []):
+            if v in _stack or (v not in _seen and _has_cycle(v)):
+                return True
+        _stack.discard(u)
+        return False
+
+    for n in list(retire_edges):
+        if n not in _seen and _has_cycle(n):
+            _cycle_node = n
+            break
+    if _cycle_node:
+        errors.append(f"{_cycle_node}: retirement-edge cycle — a doc refutes/supersedes one that "
+                      f"(transitively) retires it back; refutation must be acyclic")
 
     print(f"Checked {checked} docs.")
     if ledger_full and ledger_full.exists():
