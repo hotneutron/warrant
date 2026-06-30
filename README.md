@@ -26,8 +26,8 @@ the consumer repo. Per-team implementations are retired in favor of this shared 
 
 | repo | governs | per-consumer config |
 |---|---|---|
-| **[artifact_types](../artifact_types)** | the canonical type **vocabulary** | — (shared) |
-| **[parallax](../parallax)** | the cross-team **exchange** (sync, independence enforcement) | `tiers.json` |
+| **[artifact_types](https://github.com/hotneutron/artifact_types)** | the canonical type **vocabulary** | — (shared) |
+| **[parallax](https://github.com/hotneutron/parallax)** | the cross-team **exchange** (sync, independence enforcement) | `tiers.json` |
 | **warrant** (this) | each repo's internal **doc authority** | `policy.json` (type → authority) |
 
 **Together.** A team's repo submodules **warrant** (to validate its own `docs/`) and
