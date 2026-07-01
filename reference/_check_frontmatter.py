@@ -288,8 +288,7 @@ def main():
                 and not meta.get("provenance_note"):
             warnings.append(f"{rel}: plan lacks pre-implementation study of existing "
                             f"art — no study/competitive_baseline/reflection in parent_artifacts; "
-                            f"add one or a provenance_note to acknowledge (study-gate, RULES.md)
-(Note: scoped to 'plan' for now; opus proposed 'arch_plan'/'implementation_plan' — those types are proposed separately.)")
+                            f"add one or a provenance_note to acknowledge (study-gate, RULES.md)")
 
         # ---- inverse-provenance edges: refuted_by / superseded_by (the negative-knowledge marker).
         # A retired doc is excluded from authority propagation (Rule 2, above) and must link the doc
