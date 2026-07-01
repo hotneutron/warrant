@@ -43,7 +43,7 @@ PHYS_UNIT_RE = re.compile(
 # Neutral reference defaults — a team's policy.json overrides these (namespace-relative).
 _DEFAULT_TYPE_AUTHORITY = {
     "findings": "structured", "exercise_step": "structured", "methodology": "structured",
-    "plan": "derived", "proposal": "derived", "reflection": "derived",
+    "plan": "derived", "proposal": "derived", "reflection": "derived", "study": "derived",
     "reaction": "derived", "cross_check": "derived",
     "brainstorm": "speculative", "strategy": "speculative",
     "schema_plan": "speculative", "domain_extension": "speculative",
@@ -232,6 +232,7 @@ def main():
                           f"artifact_type '{atype}' (expected '{expected_auth}')")
 
         has_structured_parent = False
+        has_study_parent = False
         for parent in meta.get("parent_artifacts", []):
             # multi-candidate resolution (G18): the doc's own directory first (a bare
             # filename resolves as a sibling), then REPO root (a repo-relative path).
@@ -252,6 +253,8 @@ def main():
                                 f"refuted/superseded; cite a current doc or add a provenance_note")
             if pmeta.get("authority") == "structured":
                 has_structured_parent = True
+            if pmeta.get("artifact_type") in {"study", "competitive_baseline", "reflection"}:
+                has_study_parent = True
             # Inversion = laundering speculation as structured. The constitutional rule is
             # literally "don't quote speculation as if it were structured", so the check is
             # exactly that pair: only a TOP-TIER `structured` type (findings/exercise_step)
@@ -280,6 +283,13 @@ def main():
                                     f"quantities — illustrate the results with concrete physical "
                                     f"examples in domain units (W, mm², $, GB/s, ...) "
                                     f"(findings contract item 4, CLAUDE.md)")
+
+        if atype == "plan" and not has_study_parent \
+                and not meta.get("provenance_note"):
+            warnings.append(f"{rel}: plan lacks pre-implementation study of existing "
+                            f"art — no study/competitive_baseline/reflection in parent_artifacts; "
+                            f"add one or a provenance_note to acknowledge (study-gate, RULES.md)
+(Note: scoped to 'plan' for now; opus proposed 'arch_plan'/'implementation_plan' — those types are proposed separately.)")
 
         # ---- inverse-provenance edges: refuted_by / superseded_by (the negative-knowledge marker).
         # A retired doc is excluded from authority propagation (Rule 2, above) and must link the doc
