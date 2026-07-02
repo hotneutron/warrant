@@ -10,13 +10,20 @@
     "cross_check": "derived",
     "brainstorm": "speculative",
     "proposal": "derived",
-    "invented_type": "derived"
+    "invented_type": "derived",
+    "study": "derived"
   },
   "config": {
     "docs_dir": "docs",
-    "extra_roots": ["extra_root"],
-    "skip": ["docs/16_skip_me.md"],
-    "partner_markers": ["axiom-meta-ds4m"],
+    "extra_roots": [
+      "extra_root"
+    ],
+    "skip": [
+      "docs/16_skip_me.md"
+    ],
+    "partner_markers": [
+      "axiom-meta-ds4m"
+    ],
     "partner_name": "axiom-meta-ds4m",
     "leaf_source": "methodology_state.json",
     "ledger_path": "sync_ledger.json",

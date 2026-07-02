@@ -4,6 +4,7 @@ authority: derived
 generated_by: conformance-fixture
 parent_artifacts:
   - docs/_speculative_parent.md
+  - docs/_study_parent.md
 ---
 # 19 — Type-aware inversion: derived child on a speculative parent is OK
 

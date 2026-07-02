@@ -2,6 +2,7 @@
 artifact_type: plan
 authority: derived
 generated_by: conformance-fixture
+provenance_note: "conformance fixture — study-gate escape hatch (this check targets another rule)"
 parent_artifacts: ""
 convergence: n/a
   - docs/00_all_clean.md

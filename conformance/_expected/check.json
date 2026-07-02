@@ -16,7 +16,8 @@
     "D3",
     "D4",
     "R4",
-    "R7"
+    "R7",
+    "SG1"
   ],
   "checks": {
     "G1": {
@@ -183,6 +184,21 @@
       "fixture": "docs/r5a_cycle_a.md",
       "status": "FAIL",
       "desc": "retirement edge cycle (A\u2192B\u2192A) \u2192 ERROR"
+    },
+    "SG1": {
+      "fixture": "docs/SG1_plan_no_study.md",
+      "status": "FAIL",
+      "desc": "plan, non-study parent, no provenance_note \u2192 study-gate WARNING fires"
+    },
+    "SG2": {
+      "fixture": "docs/SG2_plan_study_parent.md",
+      "status": "PASS",
+      "desc": "plan with a study parent \u2192 no study-gate WARNING (has_study_parent)"
+    },
+    "SG3": {
+      "fixture": "docs/SG3_plan_provenance_note.md",
+      "status": "PASS",
+      "desc": "plan with provenance_note \u2192 no study-gate WARNING (escape hatch)"
     }
   },
   "expected_output": {
@@ -373,7 +389,7 @@
     }
   },
   "expected_counts": {
-    "checked_with_skip": 22,
-    "checked_without_skip": 23
+    "checked_with_skip": 26,
+    "checked_without_skip": 27
   }
 }
