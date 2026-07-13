@@ -17,188 +17,206 @@
     "D4",
     "R4",
     "R7",
-    "SG1"
+    "SG1",
+    "X1",
+    "X2",
+    "X3"
   ],
   "checks": {
     "G1": {
       "fixture": "docs/01_no_fm.md",
       "status": "FAIL",
-      "desc": "no frontmatter block \u2192 ERROR"
+      "desc": "no frontmatter block → ERROR"
     },
     "G2": {
       "fixture": "docs/02_missing_field.md",
       "status": "FAIL",
-      "desc": "missing required field 'authority' \u2192 ERROR"
+      "desc": "missing required field 'authority' → ERROR"
     },
     "G3": {
       "fixture": "docs/03_unknown_type.md",
       "status": "FAIL",
-      "desc": "unknown artifact_type 'nonexistent' \u2192 ERROR"
+      "desc": "unknown artifact_type 'nonexistent' → ERROR"
     },
     "G4": {
       "fixture": "docs/04_authority_mismatch.md",
       "status": "FAIL",
-      "desc": "authority 'speculative' != expected 'structured' for findings \u2192 ERROR"
+      "desc": "authority 'speculative' != expected 'structured' for findings → ERROR"
     },
     "G5": {
       "fixture": "docs/05_parent_not_found.md",
       "status": "FAIL",
-      "desc": "parent path does not exist \u2192 ERROR"
+      "desc": "parent path does not exist → ERROR"
     },
     "G6": {
       "fixture": "docs/06_parent_is_dir.md",
       "status": "PASS",
-      "desc": "directory parent \u2192 skip, no error, no crash (is_dir guard)"
+      "desc": "directory parent → skip, no error, no crash (is_dir guard)"
     },
     "G7": {
       "fixture": "docs/07_inversion_unack.md",
       "status": "FAIL",
-      "desc": "structured child, speculative parent, no provenance_note \u2192 WARNING"
+      "desc": "structured child, speculative parent, no provenance_note → WARNING"
     },
     "G8": {
       "fixture": "docs/08_inversion_ack.md",
       "status": "PASS",
-      "desc": "structured child, speculative parent, WITH provenance_note \u2192 no WARNING"
+      "desc": "structured child, speculative parent, WITH provenance_note → no WARNING"
     },
     "G9": {
       "fixture": "docs/09_findings_no_bar.md",
       "status": "FAIL",
-      "desc": "findings doc with speculative parent, no provenance_note \u2192 WARNING"
+      "desc": "findings doc with speculative parent, no provenance_note → WARNING"
     },
     "G10": {
       "fixture": "docs/260616-10_findings_few_units.md",
       "status": "FAIL",
-      "desc": "findings doc with <3 unit-bearing quantities \u2192 WARNING"
+      "desc": "findings doc with <3 unit-bearing quantities → WARNING"
     },
     "G11": {
       "fixture": "docs/260616-11_findings_enough_units.md",
       "status": "PASS",
-      "desc": "findings doc with >=3 unit-bearing quantities \u2192 no WARNING"
+      "desc": "findings doc with >=3 unit-bearing quantities → no WARNING"
     },
     "G12": {
       "fixture": "docs/12_no_convergence.md",
       "status": "FAIL",
-      "desc": "reaction doc missing convergence field \u2192 WARNING"
+      "desc": "reaction doc missing convergence field → WARNING"
     },
     "G13": {
       "fixture": "docs/13_bad_convergence.md",
       "status": "FAIL",
-      "desc": "reaction doc with invalid convergence value \u2192 WARNING"
+      "desc": "reaction doc with invalid convergence value → WARNING"
     },
     "G14": {
       "fixture": "docs/14_list_after_scalar.md",
       "status": "PASS",
-      "desc": "scalar-then-list parse \u2192 no crash, parent_artifacts parsed as list"
+      "desc": "scalar-then-list parse → no crash, parent_artifacts parsed as list"
     },
     "G15": {
       "fixture": "docs/00_all_clean.md",
       "status": "PASS",
-      "desc": "comprehensively valid doc \u2192 zero errors, zero warnings"
+      "desc": "comprehensively valid doc → zero errors, zero warnings"
     },
     "G16": {
       "fixture": "docs/16_inline_array.md",
       "status": "PASS",
-      "desc": "inline-array parent_artifacts \u2192 parsed as list, no character-iteration errors"
+      "desc": "inline-array parent_artifacts → parsed as list, no character-iteration errors"
     },
     "G17": {
       "fixture": "docs/17_convergence_list.md",
       "status": "FAIL",
-      "desc": "convergence list \u2192 no crash, correctly warns invalid/missing convergence"
+      "desc": "convergence list → no crash, correctly warns invalid/missing convergence"
     },
     "G18": {
       "fixture": "docs/18_multi_candidate_path.md",
       "status": "PASS",
-      "desc": "bare-filename parent \u2192 resolved via sibling-dir then REPO root"
+      "desc": "bare-filename parent → resolved via sibling-dir then REPO root"
     },
     "R1": {
       "fixture": "policy",
       "status": "FAIL",
-      "desc": "policy key 'invented_type' not in synthetic artifact_types.json \u2192 ERROR"
+      "desc": "policy key 'invented_type' not in synthetic artifact_types.json → ERROR"
     },
     "R2": {
       "fixture": "artifact_types.json",
       "status": "PASS",
-      "desc": "registry absent \u2192 no error, engine does not crash (multi-run verified)"
+      "desc": "registry absent → no error, engine does not crash (multi-run verified)"
     },
     "D1": {
       "fixture": "docs/17_leaf_ref_unqualified.md",
       "status": "FAIL",
-      "desc": "reaction doc with unqualified leaf ref 'cpu/imaginary_leaf' \u2192 WARNING"
+      "desc": "reaction doc with unqualified leaf ref 'cpu/imaginary_leaf' → WARNING"
     },
     "D2": {
       "fixture": "docs/260616-18_sync_coverage.md",
       "status": "FAIL",
-      "desc": "reaction mentioning partner with stale ledger \u2192 WARNING"
+      "desc": "reaction mentioning partner with stale ledger → WARNING"
     },
     "D3": {
       "fixture": "extra_root/15_extra_root.md",
       "status": "PASS",
-      "desc": "extra_roots doc IS scanned (count includes extra_root) \u2014 verified via count"
+      "desc": "extra_roots doc IS scanned (count includes extra_root) — verified via count"
     },
     "D4": {
       "fixture": "docs/16_skip_me.md",
       "status": "PASS",
-      "desc": "skip set doc is NOT scanned \u2014 verified via count delta (adds +1 when skip removed)"
+      "desc": "skip set doc is NOT scanned — verified via count delta (adds +1 when skip removed)"
     },
     "G19": {
       "fixture": "docs/19_derived_inversion_ok.md",
       "status": "PASS",
-      "desc": "derived child (plan), speculative parent, no provenance_note \u2192 NO warning (type-aware inversion gate; contrast G7)"
+      "desc": "derived child (plan), speculative parent, no provenance_note → NO warning (type-aware inversion gate; contrast G7)"
     },
     "G20": {
       "fixture": "docs/20_structured_derived_ok.md",
       "status": "PASS",
-      "desc": "structured child (exercise_step), DERIVED parent, no provenance_note \u2192 NO warning (narrowed gate: only structured\u2190speculative warns; contrast G7/G19)"
+      "desc": "structured child (exercise_step), DERIVED parent, no provenance_note → NO warning (narrowed gate: only structured←speculative warns; contrast G7/G19)"
     },
     "R3": {
       "fixture": "docs/r1_refuted_by_valid.md",
       "status": "PASS",
-      "desc": "refuted_by points to existing doc \u2192 no error"
+      "desc": "refuted_by points to existing doc → no error"
     },
     "R3b": {
       "fixture": "docs/r1b_refuted_by_list.md",
       "status": "FAIL",
-      "desc": "refuted_by as list \u2192 unlinked retirer warning (list element not referenced by retirer)"
+      "desc": "refuted_by as list → unlinked retirer warning (list element not referenced by retirer)"
     },
     "R3c": {
       "fixture": "docs/r1c_superseded_by_valid.md",
       "status": "PASS",
-      "desc": "superseded_by points to existing doc \u2192 no error"
+      "desc": "superseded_by points to existing doc → no error"
     },
     "R4": {
       "fixture": "docs/r2_refuted_by_missing.md",
       "status": "FAIL",
-      "desc": "refuted_by points to missing doc \u2192 ERROR"
+      "desc": "refuted_by points to missing doc → ERROR"
     },
     "R5": {
       "fixture": "docs/r3_refuted_by_weaker.md",
       "status": "FAIL",
-      "desc": "lower-authority doc refuting higher-authority \u2192 WARNING (H2)"
+      "desc": "lower-authority doc refuting higher-authority → WARNING (H2)"
     },
     "R6": {
       "fixture": "docs/r4_builds_on_retired.md",
       "status": "FAIL",
-      "desc": "parent is refuted/superseded \u2192 WARNING (Rule 2: builds on retired knowledge)"
+      "desc": "parent is refuted/superseded → WARNING (Rule 2: builds on retired knowledge)"
     },
     "R7": {
       "fixture": "docs/r5a_cycle_a.md",
       "status": "FAIL",
-      "desc": "retirement edge cycle (A\u2192B\u2192A) \u2192 ERROR"
+      "desc": "retirement edge cycle (A→B→A) → ERROR"
     },
     "SG1": {
       "fixture": "docs/SG1_plan_no_study.md",
       "status": "FAIL",
-      "desc": "plan, non-study parent, no provenance_note \u2192 study-gate WARNING fires"
+      "desc": "plan, non-study parent, no provenance_note → study-gate WARNING fires"
     },
     "SG2": {
       "fixture": "docs/SG2_plan_study_parent.md",
       "status": "PASS",
-      "desc": "plan with a study parent \u2192 no study-gate WARNING (has_study_parent)"
+      "desc": "plan with a study parent → no study-gate WARNING (has_study_parent)"
     },
     "SG3": {
       "fixture": "docs/SG3_plan_provenance_note.md",
       "status": "PASS",
-      "desc": "plan with provenance_note \u2192 no study-gate WARNING (escape hatch)"
+      "desc": "plan with provenance_note → no study-gate WARNING (escape hatch)"
+    },
+    "X1": {
+      "fixture": "docs/X1_external_parent_ok.md",
+      "status": "PASS",
+      "desc": "valid repo-qualified external parent accepted (syntax only, not dereferenced) → clean"
+    },
+    "X2": {
+      "fixture": "docs/X2_external_parent_no_authority.md",
+      "status": "FAIL",
+      "desc": "findings with ONLY an external parent + no provenance_note → external confers no structured authority, findings bar still fires (firewall)"
+    },
+    "X3": {
+      "fixture": "docs/X3_unsafe_external_ref.md",
+      "status": "FAIL",
+      "desc": "unsafe external-looking ref (path traversal) is NOT skipped → falls through to local resolution → parent-not-found error"
     }
   },
   "expected_output": {
