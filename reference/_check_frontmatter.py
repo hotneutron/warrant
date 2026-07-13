@@ -118,6 +118,25 @@ def _as_list(v):
     return v if isinstance(v, list) else [v]
 
 
+def _is_external_artifact_ref(ref):
+    """Return true for repo-qualified external artifact refs: <repo>:<path-in-repo>.
+
+    External parent artifacts are committed artifacts in another repo. The warrant
+    checker accepts their syntax but does not dereference them; partner reads stay
+    governed by Parallax.
+    """
+    if not isinstance(ref, str):
+        return False
+    repo, sep, rel = ref.partition(":")
+    if not sep:
+        return False
+    if "://" in ref or not repo or not rel:
+        return False
+    if rel.startswith("/") or ".." in Path(rel).parts:
+        return False
+    return re.fullmatch(r"[A-Za-z0-9_.-]+", repo) is not None
+
+
 def sync_status_line(ledger_full, partner_name):
     data = json.loads(ledger_full.read_text())
     entries = data.get("entries", [])
@@ -234,6 +253,8 @@ def main():
         has_structured_parent = False
         has_study_parent = False
         for parent in meta.get("parent_artifacts", []):
+            if _is_external_artifact_ref(parent):
+                continue
             # multi-candidate resolution (G18): the doc's own directory first (a bare
             # filename resolves as a sibling), then REPO root (a repo-relative path).
             ppath = next((c for c in (path.parent / parent, REPO / parent) if c.exists()), None)
