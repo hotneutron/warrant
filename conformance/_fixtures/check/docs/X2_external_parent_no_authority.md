@@ -3,7 +3,7 @@ artifact_type: findings
 authority: structured
 generated_by: conformance-fixture
 parent_artifacts:
-  - axiom-meta-op:docs/260713-1156-proposal-dismissal-artifact-and-revisit-contract.md
+  - axiom-meta-team-b:docs/260713-1156-proposal-dismissal-artifact-and-revisit-contract.md
 ---
 # X2 — external parent confers NO structured authority (the firewall)
 
