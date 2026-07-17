@@ -3,7 +3,7 @@ artifact_type: plan
 authority: derived
 generated_by: conformance-fixture
 parent_artifacts:
-  - axiom-meta-op:../../etc/passwd
+  - axiom-meta-team-b:../../etc/passwd
 ---
 # X3 — unsafe external-looking ref is rejected, not skipped
 

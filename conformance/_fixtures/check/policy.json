@@ -22,9 +22,9 @@
       "docs/16_skip_me.md"
     ],
     "partner_markers": [
-      "axiom-meta-ds4m"
+      "axiom-meta-team-a"
     ],
-    "partner_name": "axiom-meta-ds4m",
+    "partner_name": "axiom-meta-team-a",
     "leaf_source": "methodology_state.json",
     "ledger_path": "sync_ledger.json",
     "registry": "artifact_types.json"

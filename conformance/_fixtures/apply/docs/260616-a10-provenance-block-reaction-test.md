@@ -13,7 +13,7 @@ provenance_note: >
 ---
 # A10 — multi-line provenance_note '>' block must round-trip
 
-A correct doc whose `provenance_note` is a **multi-line block scalar** — the form op's
+A correct doc whose `provenance_note` is a **multi-line block scalar** — the form team-b's
 real docs use (the single-line quoted form in A9 is not affected). `_apply` must preserve
 the body, not collapse it to `">"`. The judge checks the **raw output text** for the
 SENTINEL string, because the field-parser cannot represent a block scalar (so a

@@ -83,6 +83,71 @@ def run_engine_sandbox(engine_path, policy_path, extra_cleanup=None):
         shutil.rmtree(sandbox, ignore_errors=True)
 
 
+def run_consumer_root_sandbox(engine_path):
+    """CR1: a consumer vendors warrant as a submodule and keeps docs outside it.
+
+    The checker must resolve parent_artifacts relative to config.consumer_root,
+    not the warrant tool repo root.
+    """
+    sandbox = tempfile.mkdtemp(prefix="wc_cr1_")
+    try:
+        root = Path(sandbox)
+        engine_dir = root / "cross-team" / "warrant" / "reference"
+        docs = root / ".plan"
+        engine_dir.mkdir(parents=True)
+        docs.mkdir()
+        shutil.copy2(str(engine_path), str(engine_dir / Path(engine_path).name))
+        (root / "cross-team.json").write_text(json.dumps({
+            "version": "1.0",
+            "warrant": {
+                "type_authority": {
+                    "plan": "derived",
+                    "study": "derived"
+                },
+                "config": {
+                    "consumer_root": ".",
+                    "docs_dir": ".plan"
+                }
+            }
+        }, indent=2))
+        (docs / "parent.md").write_text("""---
+artifact_type: study
+authority: derived
+generated_by: fixture
+parent_artifacts:
+  - external:paper.md
+---
+# Parent
+""")
+        (docs / "child.md").write_text("""---
+artifact_type: plan
+authority: derived
+generated_by: fixture
+parent_artifacts:
+  - .plan/parent.md
+---
+# Child
+""")
+        env = dict(os.environ)
+        env["CROSS_TEAM_CONFIG"] = str(root / "cross-team.json")
+        result = subprocess.run(
+            [sys.executable, str(engine_dir / Path(engine_path).name)],
+            cwd=str(engine_dir), env=env,
+            capture_output=True, text=True, timeout=30,
+        )
+        bad = "parent_artifacts path does not exist" in result.stdout
+        crashed = result.returncode > 1 or "Traceback" in result.stderr
+        scanned_fixture_docs = "Checked 2 docs." in result.stdout
+        return (
+            not bad and not crashed and scanned_fixture_docs,
+            result.stdout,
+            result.stderr,
+            result.returncode,
+        )
+    finally:
+        shutil.rmtree(sandbox, ignore_errors=True)
+
+
 def judge(parsed, expected, exit_codes):
     expected_output = expected.get("expected_output", {})
     hard = set(expected.get("hard", []))
@@ -193,12 +258,16 @@ def main():
                                                 extra_cleanup=r2_cleanup)
     exit_codes.append((ec2, stderr2))
     r2_pass = ec2 < 2 and "Traceback" not in stderr2
+    cr1_pass, stdout_cr1, stderr_cr1, ec_cr1 = run_consumer_root_sandbox(engine_path)
+    exit_codes.append((ec_cr1, stderr_cr1))
 
     parsed = parse_stdout(stdout1)
     verdict = judge(parsed, expected, exit_codes)
 
     if "R2" in verdict["checks"]:
         verdict["checks"]["R2"] = "PASS" if r2_pass else "FAIL"
+    verdict["checks"]["CR1"] = "PASS" if cr1_pass else "FAIL"
+    hard.add("CR1")
     verdict = recompute_verdict(verdict, hard)
 
     print("=== warrant conformance ===")
@@ -211,9 +280,12 @@ def main():
         print(f"stderr: {crash_lines[0]}")
     print(f"\ngate: {verdict['gate']}")
     print(f"conformance: {verdict['conformance_pct']}%")
+    extra_desc = {
+        "CR1": "consumer_root resolves repo-relative parent_artifacts when warrant is a submodule"
+    }
     for cid in sorted(verdict["checks"]):
         status = verdict["checks"][cid]
-        desc = expected.get("checks", {}).get(cid, {}).get("desc", "")
+        desc = expected.get("checks", {}).get(cid, {}).get("desc", extra_desc.get(cid, ""))
         print(f"  {cid}: {status if status in ('PASS','FAIL','BLOCKED') else 'PASS'}  ({desc})")
     print(f"\nsummary: {verdict['summary']}")
 

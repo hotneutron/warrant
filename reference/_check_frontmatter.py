@@ -15,7 +15,11 @@ policy.json = { "type_authority": {type: authority}, "config": {
     "docs_dir": "docs", "extra_roots": [...], "skip": [...],
     "partner_markers": [...], "partner_name": "...",
     "leaf_source": "methodology_state.json", "ledger_path": "...",
-    "registry": "../artifact_types/artifact_types.json" } }
+    "registry": "../artifact_types/artifact_types.json",
+    "consumer_root": "." } }
+
+Alternatively set CROSS_TEAM_CONFIG=/path/to/cross-team.json. The file's "warrant"
+section is treated as the policy object.
 """
 import json
 import os
@@ -40,7 +44,7 @@ PHYS_UNIT_RE = re.compile(
     r"|tok(?:ens)?/s|defects?/cm|/wafer\b|/die\b|°C|USD\b"
     r")")
 
-# Neutral reference defaults — a team's policy.json overrides these (namespace-relative).
+# Neutral reference defaults — a team's policy or cross-team.json overrides these.
 _DEFAULT_TYPE_AUTHORITY = {
     "findings": "structured", "exercise_step": "structured", "methodology": "structured",
     "plan": "derived", "proposal": "derived", "reflection": "derived", "study": "derived",
@@ -50,9 +54,13 @@ _DEFAULT_TYPE_AUTHORITY = {
 }
 
 
-def _repo_root():
-    """Discover the CONSUMING repo's root: walk up to methodology_state.json, else the
-    git toplevel, else the engine's grandparent. Path-agnostic (any nesting depth)."""
+def _fallback_repo_root():
+    """Discover a fallback repo root for legacy policy files.
+
+    New consumers should set config.consumer_root (or WARRANT_CONSUMER_ROOT) so
+    docs and parent_artifacts resolve relative to the consuming repo, not this
+    tool submodule.
+    """
     d = Path(__file__).resolve().parent
     while d != d.parent:
         if (d / "methodology_state.json").exists():
@@ -68,14 +76,38 @@ def _repo_root():
     return Path(__file__).resolve().parents[1]
 
 
-REPO = _repo_root()
+REPO = None
 
 
 def load_policy(path):
+    cross_team_config = os.environ.get("CROSS_TEAM_CONFIG")
+    if cross_team_config:
+        cfg_path = Path(cross_team_config).expanduser().resolve()
+        d = json.load(open(cfg_path))
+        warrant = d.get("warrant", {})
+        return (warrant.get("type_authority", _DEFAULT_TYPE_AUTHORITY),
+                warrant.get("config", {}),
+                cfg_path)
+
     if not Path(path).exists():
-        return dict(_DEFAULT_TYPE_AUTHORITY), {}
+        return dict(_DEFAULT_TYPE_AUTHORITY), {}, Path(path)
     d = json.load(open(path))
-    return d.get("type_authority", _DEFAULT_TYPE_AUTHORITY), d.get("config", {})
+    return d.get("type_authority", _DEFAULT_TYPE_AUTHORITY), d.get("config", {}), Path(path).resolve()
+
+
+def _resolve_consumer_root(cfg, config_path):
+    root = cfg.get("consumer_root") or os.environ.get("WARRANT_CONSUMER_ROOT")
+    if root:
+        p = Path(root).expanduser()
+        if not p.is_absolute():
+            p = config_path.parent / p
+        return p.resolve()
+    return _fallback_repo_root()
+
+
+def _resolve_path(raw, base):
+    p = Path(raw).expanduser()
+    return p if p.is_absolute() else base / p
 
 
 def parse_frontmatter(text):
@@ -158,13 +190,17 @@ def sync_status_line(ledger_full, partner_name):
 
 
 def main():
+    global REPO
     policy_path = ENGINE_DIR / "policy.json"
     if "--policy" in sys.argv:
         policy_path = Path(sys.argv[sys.argv.index("--policy") + 1])
-    TYPE_AUTHORITY, cfg = load_policy(policy_path)
+    TYPE_AUTHORITY, cfg, config_path = load_policy(policy_path)
+    REPO = _resolve_consumer_root(cfg, config_path)
+    config_base = REPO if (cfg.get("consumer_root") or os.environ.get("WARRANT_CONSUMER_ROOT")
+                           or os.environ.get("CROSS_TEAM_CONFIG")) else ENGINE_DIR
 
     docs_dir = cfg.get("docs_dir", "docs")
-    extra_roots = [REPO / r for r in cfg.get("extra_roots", [])]
+    extra_roots = [_resolve_path(r, REPO) for r in cfg.get("extra_roots", [])]
     skip = set(cfg.get("skip", []))
     partner_markers = tuple(cfg.get("partner_markers", []))
     partner_name = cfg.get("partner_name", "the partner")
@@ -177,7 +213,7 @@ def main():
 
     # ---- registry validation: policy type keys must be in the artifact_types
     # registry — drift is an error, not silent. Skipped if the registry isn't present.
-    reg_path = (ENGINE_DIR / registry) if not os.path.isabs(registry) else Path(registry)
+    reg_path = _resolve_path(registry, config_base)
     if reg_path.exists():
         reg_types = set(json.load(open(reg_path)).get("types", {}))
         for t in sorted(TYPE_AUTHORITY):
@@ -187,8 +223,9 @@ def main():
 
     # ---- optional domain source: schema leaves for unqualified-leaf-ref detection
     groups, schema_leaves = set(), set()
-    if leaf_source and (REPO / leaf_source).exists():
-        state = json.loads((REPO / leaf_source).read_text())
+    leaf_full = _resolve_path(leaf_source, REPO) if leaf_source else None
+    if leaf_full and leaf_full.exists():
+        state = json.loads(leaf_full.read_text())
         for g, gd in state.get("dimensions", {}).items():
             groups.add(g)
             for l in gd.get("leaves", {}):
@@ -197,13 +234,13 @@ def main():
         if groups else None
 
     # ---- optional domain source: the sync ledger (coverage + ambient status line)
-    ledger_full = (REPO / ledger_path) if ledger_path else None
+    ledger_full = _resolve_path(ledger_path, REPO) if ledger_path else None
     syncs = []
     if ledger_full and ledger_full.exists():
         syncs = json.loads(ledger_full.read_text()).get("entries", [])
     last_sync_date = max((e["date"].replace("-", "")[2:] for e in syncs), default=None)
 
-    all_paths = list((REPO / docs_dir).rglob("*.md"))
+    all_paths = list(_resolve_path(docs_dir, REPO).rglob("*.md"))
     for root in extra_roots:
         all_paths += list(root.rglob("*.md"))
     for path in sorted(all_paths):
