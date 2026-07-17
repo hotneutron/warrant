@@ -137,7 +137,13 @@ parent_artifacts:
         )
         bad = "parent_artifacts path does not exist" in result.stdout
         crashed = result.returncode > 1 or "Traceback" in result.stderr
-        return (not bad and not crashed), result.stdout, result.stderr, result.returncode
+        scanned_fixture_docs = "Checked 2 docs." in result.stdout
+        return (
+            not bad and not crashed and scanned_fixture_docs,
+            result.stdout,
+            result.stderr,
+            result.returncode,
+        )
     finally:
         shutil.rmtree(sandbox, ignore_errors=True)
 
